@@ -1,0 +1,104 @@
+// Prisma schema for the portfolio.
+// SQLite doesn't support Prisma's `Json` type, so bilingual {en,id} objects and
+// arrays are stored as JSON *strings* (String columns) and parsed in the app layer
+// via lib/content.ts. Portable to Postgres later without data changes.
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// Single admin account
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+/// Single-row site profile / hero / about / contact
+model Profile {
+  id           String   @id @default(cuid())
+  name         String
+  initials     String   @default("MED")
+  photoUrl     String?
+  cvUrl        String?
+  roles        String   // JSON: { en: string[], id: string[] }
+  eyebrow      String   // JSON: { en, id }
+  intro        String   // JSON: { en, id }
+  location     String   // JSON: { en, id }
+  availability String   // JSON: { en, id }
+  email        String
+  phone        String
+  linkedin     String
+  showPhone    Boolean  @default(true)
+  aboutParas   String   // JSON: [{ en, id }]
+  facts        String   // JSON: [{ k:{en,id}, v:{en,id} }]
+  stats        String   // JSON: [{ n, dec, suf, lbl:{en,id} }]
+  contactH     String   // JSON: { en, id }
+  contactP     String   // JSON: { en, id }
+  openTo       String   // JSON: string[]
+  updatedAt    DateTime @updatedAt
+}
+
+model Experience {
+  id      String  @id @default(cuid())
+  org     String
+  loc     String
+  current Boolean @default(false)
+  role    String  // JSON: { en, id }
+  type    String  // JSON: { en, id }
+  period  String  // JSON: { en, id }
+  bullets String  // JSON: { en: string[], id: string[] }
+  tags    String  // JSON: string[]
+  order   Int     @default(0)
+}
+
+model Project {
+  id       String  @id @default(cuid())
+  name     String
+  category String  // "web" | "mobile" | "data"
+  role     String  // JSON: { en, id }
+  period   String  // JSON: { en, id }
+  desc     String  // JSON: { en, id }
+  tags     String  // JSON: string[]
+  imageUrl String?
+  link     String?
+  order    Int     @default(0)
+}
+
+model SkillGroup {
+  id    String @id @default(cuid())
+  title String // JSON: { en, id }
+  items String // JSON: string[]
+  order Int    @default(0)
+}
+
+model Education {
+  id     String @id @default(cuid())
+  school String
+  degree String // JSON: { en, id }
+  period String // JSON: { en, id }
+  detail String // JSON: { en, id }
+  order  Int    @default(0)
+}
+
+model Organization {
+  id      String @id @default(cuid())
+  org     String
+  role    String // JSON: { en, id }
+  period  String // JSON: { en, id }
+  bullets String // JSON: { en: string[], id: string[] }
+  order   Int    @default(0)
+}
+
+model Certificate {
+  id    String @id @default(cuid())
+  name  String
+  sub   String // JSON: { en, id }
+  order Int    @default(0)
+}

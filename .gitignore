@@ -1,0 +1,32 @@
+# ============================================================
+#  Muhammad Endar Darmawan — Personal Portfolio
+# ============================================================
+
+# --- Next.js app: dependencies & build output ---
+web/node_modules/
+web/.next/
+web/out/
+web/.turbo/
+
+# --- Environment & secrets (never commit) ---
+web/.env
+web/.env.*
+
+# --- Local SQLite database (recreate: npm run db:migrate && npm run db:seed) ---
+web/prisma/dev.db
+web/prisma/dev.db-journal
+web/prisma/*.db
+web/prisma/*.db-journal
+
+# --- Phase-1 static preview build intermediates ---
+/build/
+
+# --- Archived previous attempt (kept on disk, not versioned) ---
+/archive/
+
+# --- OS / editor / logs ---
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
