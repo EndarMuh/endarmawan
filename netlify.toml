@@ -1,9 +1,12 @@
 # Netlify builds the Next.js app inside web/ (NOT the repo-root static index.html).
-# The Next.js Runtime is AUTO-installed by Netlify when it detects a Next.js app —
-# do NOT pin @netlify/plugin-nextjs here (pinning it conflicts with the managed runtime).
 [build]
   base = "web"
   command = "npm run build"
 
 [build.environment]
   NODE_VERSION = "22"
+
+# Force the Next.js Runtime to run (auto-detection didn't engage for this site,
+# which left Netlify serving a static dir with no index → 404).
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
