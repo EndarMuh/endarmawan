@@ -1,12 +1,10 @@
-# Netlify builds the Next.js app inside web/ (NOT the repo-root static index.html).
+# Next.js app lives in web/. The Next.js Runtime v5 is AUTO-installed by Netlify
+# when the site's BASE DIRECTORY points at the app — so set base = web in the
+# Netlify UI (Build settings). Do NOT pin @netlify/plugin-nextjs (that pulls the
+# deprecated v4 which errors on Next 16).
 [build]
   base = "web"
   command = "npm run build"
 
 [build.environment]
   NODE_VERSION = "22"
-
-# Force the Next.js Runtime to run (auto-detection didn't engage for this site,
-# which left Netlify serving a static dir with no index → 404).
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
