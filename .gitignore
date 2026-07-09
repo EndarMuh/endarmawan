@@ -30,3 +30,7 @@ web/prisma/*.db-journal
 Thumbs.db
 .vscode/
 .idea/
+
+# --- AI-assistant context & local tooling config (keep local, not in public repo) ---
+CLAUDE.md
+.claude/

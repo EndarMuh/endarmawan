@@ -3,13 +3,15 @@
 // arrays are stored as JSON *strings* (String columns) and parsed in the app layer
 // via lib/content.ts. Portable to Postgres later without data changes.
 generator client {
-  provider   = "prisma-client-js"
-  engineType = "binary"
+  provider      = "prisma-client-js"
+  // native = local dev; the linux targets are for the Netlify build + functions runtime.
+  binaryTargets = ["native", "debian-openssl-3.0.x", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 /// Single admin account
@@ -26,7 +28,8 @@ model Profile {
   name         String
   initials     String   @default("MED")
   photoUrl     String?
-  cvUrl        String?
+  cvUrl        String?  // CV PDF for the English site
+  cvUrlId      String?  // CV PDF for the Indonesian site (falls back to cvUrl if empty)
   roles        String   // JSON: { en: string[], id: string[] }
   eyebrow      String   // JSON: { en, id }
   intro        String   // JSON: { en, id }
@@ -35,6 +38,8 @@ model Profile {
   email        String
   phone        String
   linkedin     String
+  github       String?
+  gitlab       String?
   showPhone    Boolean  @default(true)
   aboutParas   String   // JSON: [{ en, id }]
   facts        String   // JSON: [{ k:{en,id}, v:{en,id} }]
@@ -97,8 +102,9 @@ model Organization {
 }
 
 model Certificate {
-  id    String @id @default(cuid())
-  name  String
-  sub   String // JSON: { en, id }
-  order Int    @default(0)
+  id      String  @id @default(cuid())
+  name    String
+  sub     String  // JSON: { en, id }
+  fileUrl String? // uploaded certificate image (shown as a preview, click to enlarge)
+  order   Int     @default(0)
 }

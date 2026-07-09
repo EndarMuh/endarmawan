@@ -1,11 +1,6 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  // 32-bit Node has a ~2GB heap ceiling; disable webpack's filesystem cache in dev to avoid
-  // "Array buffer allocation failed" from the pack-file cache strategy.
-  webpack(config, { dev }) {
-    if (dev) config.cache = false;
-    return config;
-  },
-};
+// Node is 64-bit now, so the old ia32 workarounds are gone:
+// dev uses Turbopack (fast), and the webpack cache no longer needs disabling.
+const nextConfig = {};
 
 export default nextConfig;

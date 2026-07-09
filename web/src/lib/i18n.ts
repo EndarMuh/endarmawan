@@ -31,7 +31,16 @@ export const UI = {
   eduCol: { en: "Education", id: "Pendidikan" },
   orgCol: { en: "Organization", id: "Organisasi" },
   certCol: { en: "Certificates", id: "Sertifikat" },
+  certView: { en: "Click to view certificate", id: "Klik untuk lihat sertifikat" },
   openTo: { en: "Open to roles", id: "Terbuka untuk peran" },
   foot: { en: "// designed & built as a living portfolio", id: "// dirancang & dibangun sebagai portofolio hidup" },
   totop: { en: "Back to top", id: "Ke atas" },
+  footK: { en: "Let's work together", id: "Mari berkarya" },
+  footTagline: {
+    en: "Software Engineer & Data Enthusiast from Indonesia. Open to web, UI/UX, and data roles.",
+    id: "Software Engineer & Data Enthusiast dari Indonesia. Terbuka untuk peran web, UI/UX, dan data.",
+  },
+  colExplore: { en: "Explore", id: "Jelajah" },
+  colWork: { en: "Work", id: "Karya" },
+  colConnect: { en: "Connect", id: "Terhubung" },
 } satisfies Record<string, L | Record<string, L>>;

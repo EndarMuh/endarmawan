@@ -19,8 +19,6 @@ const IcSun = () => (<svg viewBox="0 0 24 24" {...s}><circle cx="12" cy="12" r="
 const IcMoon = () => (<svg viewBox="0 0 24 24" {...s}><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" /></svg>);
 const IcMenu = () => (<svg viewBox="0 0 24 24" {...s}><path d="M3 6h18M3 12h18M3 18h18" /></svg>);
 const IcUp = () => (<svg width="14" height="14" viewBox="0 0 24 24" {...s}><path d="M12 19V5M5 12l7-7 7 7" /></svg>);
-const IcGithub = () => (<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.1-1.47-1.1-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z" /></svg>);
-const IcGitlab = () => (<svg viewBox="0 0 24 24" fill="currentColor"><path d="m23.6 9.6-.03-.08-3.2-8.35a.83.83 0 0 0-1.57.03L16.68 7.4H7.33L5.2 1.23a.83.83 0 0 0-1.57-.03L.43 9.55l-.03.08a5.93 5.93 0 0 0 1.97 6.85l.02.02 4.86 3.64 2.41 1.82 1.47 1.11a.97.97 0 0 0 1.17 0l1.47-1.11 2.41-1.82 4.89-3.66.01-.01a5.94 5.94 0 0 0 1.98-6.86Z" /></svg>);
 
 const NAV = [
   { id: "about", key: "about" },
@@ -30,34 +28,6 @@ const NAV = [
   { id: "education", key: "education" },
   { id: "contact", key: "contact" },
 ] as const;
-
-/* Hidden SVG defs — the batik motif (octagon-medallion) referenced by the header/footer layers. */
-function BatikDefs() {
-  return (
-    <svg id="batik-defs" aria-hidden="true">
-      <defs>
-        <pattern id="batik" width="52" height="52" patternUnits="userSpaceOnUse">
-          <polygon className="bt-oct" points="15,0 37,0 52,15 52,37 37,52 15,52 0,37 0,15" />
-          <polygon className="bt-oct thin" points="20,5 32,5 47,20 47,32 32,47 20,47 5,32 5,20" />
-          <g className="bt-med">
-            <circle cx="26" cy="26" r="8.5" />
-            <path d="M26 15 L28.4 23.6 L37 26 L28.4 28.4 L26 37 L23.6 28.4 L15 26 L23.6 23.6 Z" />
-          </g>
-          <circle className="bt-dot" cx="26" cy="26" r="2.1" />
-          <path className="bt-dot" d="M0 -5 L5 0 L0 5 L-5 0 Z" />
-          <path className="bt-dot" d="M52 -5 L57 0 L52 5 L47 0 Z" />
-          <path className="bt-dot" d="M0 47 L5 52 L0 57 L-5 52 Z" />
-          <path className="bt-dot" d="M52 47 L57 52 L52 57 L47 52 Z" />
-        </pattern>
-      </defs>
-    </svg>
-  );
-}
-const BatikLayer = ({ className }: { className: string }) => (
-  <div className={`bt ${className}`} aria-hidden="true">
-    <svg xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="url(#batik)" /></svg>
-  </div>
-);
 
 export default function Portfolio({ content }: { content: ContentData }) {
   const p = content.profile;
@@ -70,7 +40,6 @@ export default function Portfolio({ content }: { content: ContentData }) {
   const [active, setActive] = useState("about");
   const [lightbox, setLightbox] = useState<string | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const glowRef = useRef<HTMLDivElement | null>(null);
 
   const t = (v: L) => v[lang];
 
@@ -139,24 +108,8 @@ export default function Portfolio({ content }: { content: ContentData }) {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
-  /* hero gold glow follows the cursor */
-  const onHeroMove = (e: React.MouseEvent) => {
-    const g = glowRef.current;
-    if (!g) return;
-    const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    g.style.left = `${e.clientX - r.left}px`;
-    g.style.top = `${e.clientY - r.top}px`;
-    g.style.opacity = "0.7";
-  };
-  const onHeroLeave = () => { if (glowRef.current) glowRef.current.style.opacity = "0.45"; };
-
   const roles = p.roles[lang];
   const shownProjects = content.projects.filter((pr) => filter === "all" || pr.category === filter);
-
-  // Split the display name so the last word gets the italic-gold treatment.
-  const nameWords = p.name.trim().split(" ");
-  const lastName = nameWords.length > 1 ? nameWords.pop()! : "";
-  const firstNames = nameWords.join(" ");
 
   // Language-aware CV: ID site → Indonesian CV (fall back to English), EN site → English CV.
   const cvHref = lang === "id" ? (p.cvUrlId ?? p.cvUrl) : (p.cvUrl ?? p.cvUrlId);
@@ -165,7 +118,9 @@ export default function Portfolio({ content }: { content: ContentData }) {
   const downloadCV = async (e: React.MouseEvent) => {
     e.preventDefault();
     if (!cvHref) return;
+    // 1) preview in a new tab (allowed — this runs inside a user click)
     window.open(cvHref, "_blank", "noopener,noreferrer");
+    // 2) force the actual download regardless of the browser's inline-PDF setting
     try {
       const res = await fetch(cvHref);
       const blob = await res.blob();
@@ -184,14 +139,11 @@ export default function Portfolio({ content }: { content: ContentData }) {
 
   return (
     <div className="page">
-      <BatikDefs />
-
       {/* NAV */}
       <nav className="nav">
-        <BatikLayer className="nav-bt" />
         <div className="wrap nav-inner">
           <a className="brand" onClick={() => go("top")} role="button" tabIndex={0}>
-            <span className="mark boop">{p.initials}</span>
+            <span className="mark">{p.initials}</span>
             <span>{p.name}</span>
           </a>
           <div className="navlinks">
@@ -202,15 +154,14 @@ export default function Portfolio({ content }: { content: ContentData }) {
             ))}
           </div>
           <div className="controls">
-            <div className={`lang ${lang === "id" ? "id" : ""}`} role="group" aria-label="Language">
-              <span className="ind" />
+            <div className="lang" role="group" aria-label="Language">
               <button className={lang === "en" ? "on" : ""} onClick={() => setLang("en")}>EN</button>
               <button className={lang === "id" ? "on" : ""} onClick={() => setLang("id")}>ID</button>
             </div>
-            <button className="iconbtn boop" onClick={toggleTheme} aria-label="Toggle theme">
+            <button className="iconbtn" onClick={toggleTheme} aria-label="Toggle theme">
               {theme === "dark" ? <IcSun /> : <IcMoon />}
             </button>
-            <button className="iconbtn menubtn boop" onClick={() => setMenuOpen((o) => !o)} aria-label="Menu">
+            <button className="iconbtn menubtn" onClick={() => setMenuOpen((o) => !o)} aria-label="Menu">
               <IcMenu />
             </button>
           </div>
@@ -226,12 +177,11 @@ export default function Portfolio({ content }: { content: ContentData }) {
 
       <main>
         {/* HERO */}
-        <header className="hero" onMouseMove={onHeroMove} onMouseLeave={onHeroLeave}>
-          <div className="glow" ref={glowRef} aria-hidden="true" />
+        <header className="hero">
           <div className="wrap hero-grid">
             <div>
               <span className="eyebrow">{t(p.eyebrow)}</span>
-              <h1>{firstNames} {lastName && <span className="amp">{lastName}</span>}</h1>
+              <h1>{p.name}</h1>
               <div className="hero-role">
                 <span className="caret">&gt;</span>
                 <span className="role-word" key={`${lang}-${roleIdx}`}>{roles[roleIdx % roles.length]}</span>
@@ -279,9 +229,8 @@ export default function Portfolio({ content }: { content: ContentData }) {
 
         {/* ABOUT */}
         <section className="section" id="about">
-          <BatikLayer className="side-bt side-left" />
           <div className="wrap">
-            <SecHead kicker="about" title={t(UI.sec.about)} />
+            <SecHead num="01" title={t(UI.sec.about)} />
             <div className="about-grid">
               <Reveal className="about-copy">
                 {p.aboutParas.map((para, i) => <p key={i}>{t(para)}</p>)}
@@ -300,9 +249,8 @@ export default function Portfolio({ content }: { content: ContentData }) {
 
         {/* EXPERIENCE */}
         <section className="section" id="experience">
-          <BatikLayer className="side-bt side-right" />
           <div className="wrap">
-            <SecHead kicker="experience" title={t(UI.sec.experience)} />
+            <SecHead num="02" title={t(UI.sec.experience)} />
             <div className="timeline">
               {content.experiences.map((e) => (
                 <Reveal key={e.id} className="tl-item">
@@ -333,9 +281,8 @@ export default function Portfolio({ content }: { content: ContentData }) {
 
         {/* PROJECTS */}
         <section className="section" id="projects">
-          <BatikLayer className="side-bt side-left" />
           <div className="wrap">
-            <SecHead kicker="projects" title={t(UI.sec.projects)} />
+            <SecHead num="03" title={t(UI.sec.projects)} />
             <div className="filter">
               <button className={filter === "all" ? "on" : ""} onClick={() => setFilter("all")}>{t(UI.filterAll)}</button>
               <button className={filter === "web" ? "on" : ""} onClick={() => setFilter("web")}>{t(UI.filters.web)}</button>
@@ -362,9 +309,8 @@ export default function Portfolio({ content }: { content: ContentData }) {
 
         {/* SKILLS */}
         <section className="section" id="skills">
-          <BatikLayer className="side-bt side-right" />
           <div className="wrap">
-            <SecHead kicker="skills" title={t(UI.sec.skills)} />
+            <SecHead num="04" title={t(UI.sec.skills)} />
             <div className="skills-grid">
               {content.skills.map((g) => (
                 <Reveal key={g.id} className="skill-group">
@@ -380,9 +326,8 @@ export default function Portfolio({ content }: { content: ContentData }) {
 
         {/* EDUCATION & ORGANIZATION */}
         <section className="section" id="education">
-          <BatikLayer className="side-bt side-left" />
           <div className="wrap">
-            <SecHead kicker="education" title={t(UI.sec.education)} />
+            <SecHead num="05" title={t(UI.sec.education)} />
             <div className="edu-grid">
               <div>
                 <div className="col-title">{t(UI.eduCol)}</div>
@@ -440,7 +385,7 @@ export default function Portfolio({ content }: { content: ContentData }) {
         {/* CONTACT */}
         <section className="section" id="contact">
           <div className="wrap">
-            <SecHead kicker="contact" title={t(UI.sec.contact)} />
+            <SecHead num="06" title={t(UI.sec.contact)} />
             <Reveal className="contact-card">
               <h2 className="contact-h">{t(p.contactH)}</h2>
               <p className="contact-p">{t(p.contactP)}</p>
@@ -448,8 +393,6 @@ export default function Portfolio({ content }: { content: ContentData }) {
                 <a className="cbtn primary" href={`mailto:${p.email}`}><IcMail /> {p.email}</a>
                 <button className="cbtn" onClick={copyEmail}><IcCopy /> {t(UI.copy)}</button>
                 <a className="cbtn" href={`https://${p.linkedin}`} target="_blank" rel="noopener noreferrer"><IcLinkedin /> LinkedIn</a>
-                {p.github && <a className="cbtn" href={`https://${p.github}`} target="_blank" rel="noopener noreferrer"><IcGithub /> GitHub</a>}
-                {p.gitlab && <a className="cbtn" href={`https://${p.gitlab}`} target="_blank" rel="noopener noreferrer"><IcGitlab /> GitLab</a>}
                 {p.showPhone && (
                   <a className="cbtn" href={`tel:${p.phone.replace(/[^+0-9]/g, "")}`}><IcPhone /> {p.phone}</a>
                 )}
@@ -465,56 +408,13 @@ export default function Portfolio({ content }: { content: ContentData }) {
         </section>
       </main>
 
-      {/* FOOTER (Josh-inspired, batik dome from the bottom) */}
       <footer className="footer">
-        <BatikLayer className="foot-bt" />
-        <div className="wrap">
-          <div className="foot-cta">
-            <div className="k">{t(UI.footK)}</div>
-            <h2 className="foot-h">{t(p.contactH)}</h2>
-            <a className="big-btn boop" onClick={() => go("contact")} role="button" tabIndex={0}>
-              ✦ {t(UI.cta.contact)}
-            </a>
-          </div>
-
-          <div className="foot-cols">
-            <div className="fcol">
-              <div className="fbrand"><span className="mk">{p.initials}</span>{p.name}</div>
-              <p>{t(UI.footTagline)}</p>
-              <div className="socials">
-                <a className="soc boop" href={`mailto:${p.email}`} title="Email" aria-label="Email"><IcMail /></a>
-                <a className="soc boop" href={`https://${p.linkedin}`} target="_blank" rel="noopener noreferrer" title="LinkedIn" aria-label="LinkedIn"><IcLinkedin /></a>
-                {p.github && <a className="soc boop" href={`https://${p.github}`} target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><IcGithub /></a>}
-                {p.gitlab && <a className="soc boop" href={`https://${p.gitlab}`} target="_blank" rel="noopener noreferrer" title="GitLab" aria-label="GitLab"><IcGitlab /></a>}
-              </div>
-            </div>
-            <div className="fcol">
-              <h4>{t(UI.colExplore)}</h4>
-              {NAV.map((n) => <a key={n.id} onClick={() => go(n.id)}>{t(UI.nav[n.key])}</a>)}
-            </div>
-            <div className="fcol">
-              <h4>{t(UI.colWork)}</h4>
-              {content.projects.slice(0, 4).map((pr) => (
-                <a key={pr.id} onClick={() => go("projects")}>{pr.name}</a>
-              ))}
-            </div>
-            <div className="fcol">
-              <h4>{t(UI.colConnect)}</h4>
-              <a href={`mailto:${p.email}`}>{p.email}</a>
-              <a href={`https://${p.linkedin}`} target="_blank" rel="noopener noreferrer">LinkedIn</a>
-              {p.github && <a href={`https://${p.github}`} target="_blank" rel="noopener noreferrer">GitHub</a>}
-              {p.gitlab && <a href={`https://${p.gitlab}`} target="_blank" rel="noopener noreferrer">GitLab</a>}
-              {cvHref && <a href={cvHref} onClick={downloadCV}>{t(UI.cta.cv)}</a>}
-            </div>
-          </div>
-
-          <div className="foot-bar">
-            <span>{t(UI.foot)}</span>
-            <span>{p.name} · 2026</span>
-            <button className="totop" onClick={() => go("top")}>
-              {t(UI.totop)} <IcUp />
-            </button>
-          </div>
+        <div className="wrap footer-inner">
+          <span className="mono">{t(UI.foot)}</span>
+          <span className="mono">{p.name} · 2026</span>
+          <button className="totop" onClick={() => go("top")}>
+            <IcUp /> {t(UI.totop)}
+          </button>
         </div>
       </footer>
 
@@ -533,10 +433,10 @@ export default function Portfolio({ content }: { content: ContentData }) {
   );
 }
 
-function SecHead({ kicker, title }: { kicker: string; title: string }) {
+function SecHead({ num, title }: { num: string; title: string }) {
   return (
     <Reveal className="sec-head">
-      <span className="sec-kicker">// {kicker}</span>
+      <span className="sec-num">{num}</span>
       <h2 className="sec-title">{title}</h2>
       <span className="sec-line" />
     </Reveal>

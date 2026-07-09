@@ -27,6 +27,7 @@ async function main() {
       initials: "MED",
       photoUrl: "/uploads/profile.png",
       cvUrl: "/uploads/CV_Muhammad_Endar_Darmawan_ENG.pdf",
+      cvUrlId: null, // upload the Indonesian CV from the admin; falls back to the English one until then
       roles: J({
         en: ["Software Engineer", "Web Developer", "UI/UX Designer", "Data Enthusiast"],
         id: ["Software Engineer", "Web Developer", "Desainer UI/UX", "Data Enthusiast"],
@@ -40,8 +41,11 @@ async function main() {
       availability: J({ en: "Open to opportunities", id: "Terbuka untuk peluang" }),
       email: "endarmuhammad38@gmail.com",
       phone: "+62 895-1682-4205",
-      linkedin: "linkedin.com/in/muhendar",
-      showPhone: true,
+      linkedin: "www.linkedin.com/in/muhammad-endar-darmawan",
+      github: "github.com/EndarMuh",
+      gitlab: "gitlab.com/EndarMuh",
+      showPhone: false, // per user: tampilkan email + LinkedIn + GitHub + GitLab, nomor HP disembunyikan
+
       aboutParas: J([
         {
           en: "I'm a D4 Informatics Engineering graduate (GPA 3.70) and a Software Engineer with a year of professional experience turning complex, real-world requirements into production software.",
@@ -246,8 +250,8 @@ async function main() {
   await prisma.certificate.deleteMany();
   await prisma.certificate.createMany({
     data: [
-      { order: 0, name: "TOEIC", sub: J({ en: "English Proficiency", id: "Kemampuan Bahasa Inggris" }) },
-      { order: 1, name: "D4 Informatics Engineering", sub: J({ en: "Politeknik Negeri Malang", id: "Politeknik Negeri Malang" }) },
+      { order: 0, name: "TOEIC", sub: J({ en: "English Proficiency", id: "Kemampuan Bahasa Inggris" }), fileUrl: null },
+      { order: 1, name: "D4 Informatics Engineering", sub: J({ en: "Politeknik Negeri Malang", id: "Politeknik Negeri Malang" }), fileUrl: null },
     ],
   });
 

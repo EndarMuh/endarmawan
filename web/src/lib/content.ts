@@ -13,9 +13,12 @@ export type ProfileData = {
   initials: string;
   photoUrl: string | null;
   cvUrl: string | null;
+  cvUrlId: string | null;
   email: string;
   phone: string;
   linkedin: string;
+  github: string | null;
+  gitlab: string | null;
   showPhone: boolean;
   roles: LList;
   eyebrow: L;
@@ -41,7 +44,7 @@ export type ProjectData = {
 export type SkillGroupData = { id: string; title: L; items: string[] };
 export type EducationData = { id: string; school: string; degree: L; period: L; detail: L };
 export type OrganizationData = { id: string; org: string; role: L; period: L; bullets: LList };
-export type CertificateData = { id: string; name: string; sub: L };
+export type CertificateData = { id: string; name: string; sub: L; fileUrl: string | null };
 
 export type ContentData = {
   profile: ProfileData;
@@ -76,9 +79,12 @@ export async function getContent(): Promise<ContentData> {
       initials: profile.initials,
       photoUrl: profile.photoUrl,
       cvUrl: profile.cvUrl,
+      cvUrlId: profile.cvUrlId,
       email: profile.email,
       phone: profile.phone,
       linkedin: profile.linkedin,
+      github: profile.github,
+      gitlab: profile.gitlab,
       showPhone: profile.showPhone,
       roles: P<LList>(profile.roles),
       eyebrow: P<L>(profile.eyebrow),
@@ -109,6 +115,6 @@ export async function getContent(): Promise<ContentData> {
     organizations: organizations.map((o) => ({
       id: o.id, org: o.org, role: P<L>(o.role), period: P<L>(o.period), bullets: P<LList>(o.bullets),
     })),
-    certificates: certificates.map((c) => ({ id: c.id, name: c.name, sub: P<L>(c.sub) })),
+    certificates: certificates.map((c) => ({ id: c.id, name: c.name, sub: P<L>(c.sub), fileUrl: c.fileUrl })),
   };
 }
