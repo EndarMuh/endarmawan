@@ -87,12 +87,14 @@ button { font-family: inherit; }
 @keyframes domeH { 0%, 100% { clip-path: circle(15% at 50% 0%); } 50% { clip-path: circle(165% at 50% 0%); } }
 @keyframes domeF { 0%, 100% { clip-path: circle(15% at 50% 100%); } 50% { clip-path: circle(150% at 50% 100%); } }
 /* section-edge batik accents — alternate left/right down the page (zigzag) */
-.side-bt { inset: 0 auto 0 -14px; right: auto; width: 168px; opacity: .13;
+.side-bt { inset: 0 auto 0 -14px; right: auto; width: 193px; opacity: .16; animation: sidePulse 5s ease-in-out infinite;
   -webkit-mask-image: linear-gradient(to right, #000, #000 24%, transparent 88%);
           mask-image: linear-gradient(to right, #000, #000 24%, transparent 88%); }
 .side-bt.side-right { inset: 0 -14px 0 auto; left: auto;
   -webkit-mask-image: linear-gradient(to left, #000, #000 24%, transparent 88%);
           mask-image: linear-gradient(to left, #000, #000 24%, transparent 88%); }
+/* gentle "breathing": base opacity brightens ~+10% then eases back */
+@keyframes sidePulse { 0%, 100% { opacity: .16; } 50% { opacity: .19; } }
 @media (max-width: 760px) { .side-bt { display: none; } }
 
 /* ============ NAV (Josh-inspired header) ============ */

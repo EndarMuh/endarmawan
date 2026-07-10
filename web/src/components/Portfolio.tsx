@@ -172,7 +172,7 @@ export default function Portfolio({ content }: { content: ContentData }) {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `CV_${p.name}.pdf`;
+      a.download = `CV_${p.name} (${lang === "id" ? "ID" : "EN"}).pdf`;
       document.body.appendChild(a);
       a.click();
       a.remove();
