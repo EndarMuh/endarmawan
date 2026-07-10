@@ -123,6 +123,32 @@ export function BilingualLines({ label, value, onChange, hint }: {
 }
 
 /* ---------------- file uploader ---------------- */
+// Shrink big images in the browser BEFORE upload so they never exceed the serverless
+// function's payload limit (which caused "Internal Error" 500s on large photos).
+async function compressImage(file: File): Promise<Blob> {
+  if (file.type === "image/svg+xml" || file.type === "image/gif" || file.size < 512 * 1024) return file;
+  try {
+    const bmp = await createImageBitmap(file);
+    const maxDim = 1400;
+    let { width, height } = bmp;
+    if (width > maxDim || height > maxDim) {
+      const s = maxDim / Math.max(width, height);
+      width = Math.round(width * s);
+      height = Math.round(height * s);
+    }
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return file;
+    ctx.drawImage(bmp, 0, 0, width, height);
+    const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, "image/webp", 0.85));
+    return blob && blob.size < file.size ? blob : file;
+  } catch {
+    return file;
+  }
+}
+
 export function Uploader({
   label, value, onChange, kind = "image", hint,
 }: {
@@ -137,11 +163,21 @@ export function Uploader({
     setBusy(true);
     setErr(null);
     try {
+      const payload = kind === "image" ? await compressImage(file) : file;
+      const name = payload === file ? file.name : "upload.webp";
       const fd = new FormData();
-      fd.append("file", file);
+      fd.append("file", payload, name);
       fd.append("kind", kind);
       const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
-      const json = await res.json();
+      // The response can be a non-JSON error page (e.g. a 500 "Internal Error") — read
+      // as text first so we surface a real message instead of a JSON-parse crash.
+      const text = await res.text();
+      let json: { url?: string; error?: string };
+      try {
+        json = JSON.parse(text);
+      } catch {
+        json = { error: text.slice(0, 140) || `Gagal (HTTP ${res.status}).` };
+      }
       if (!res.ok) throw new Error(json.error ?? "Gagal mengunggah.");
       onChange(json.url as string);
     } catch (e) {
