@@ -227,8 +227,8 @@ button { font-family: inherit; }
 .timeline { position: relative; display: flex; flex-direction: column; gap: 8px; }
 .tl-item { display: grid; grid-template-columns: 170px 1fr; gap: 24px; position: relative; padding-bottom: 26px; }
 .tl-item:not(:last-child)::before { content: ""; position: absolute; left: calc(170px + 5px); top: 26px; bottom: -4px; width: 1px; background: var(--line-2); }
-.tl-side { text-align: right; padding-top: 22px; }
-.tl-period { font-family: var(--mono); font-size: 12px; color: var(--muted); font-weight: 600; }
+.tl-side { text-align: right; padding-top: 22px; padding-right: 22px; }
+.tl-period { font-family: var(--mono); font-size: 12px; color: var(--muted); font-weight: 600; white-space: nowrap; }
 .tl-loc { font-size: 12px; color: var(--muted-2); margin-top: 4px; }
 .tl-node { position: absolute; left: 170px; top: 24px; width: 12px; height: 12px; border-radius: 50%; background: var(--bg);
   border: 2px solid var(--accent); transform: translateX(-4px); z-index: 2; }

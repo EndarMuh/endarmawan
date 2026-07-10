@@ -210,8 +210,8 @@
 
 /* messages */
 .adm-msg { font-size: 13px; padding: 10px 14px; border-radius: 10px; font-weight: 500; }
-.adm-msg.err { background: rgba(229, 72, 77, 0.1); border: 1px solid rgba(229, 72, 77, 0.3); color: #e5484d; }
-.adm-msg.ok { background: rgba(63, 191, 127, 0.1); border: 1px solid rgba(63, 191, 127, 0.3); color: #2f9e68; }
+.adm-msg.err { background: rgba(229, 72, 77, 0.12); border: 1px solid rgba(229, 72, 77, 0.35); color: #e5484d; }
+.adm-msg.ok { background: var(--accent-soft); border: 1px solid var(--accent-line); color: var(--accent); }
 
 /* ---- login ---- */
 .adm-login { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: var(--bg); }
