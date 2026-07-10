@@ -33,7 +33,7 @@ export const UI = {
   certCol: { en: "Certificates", id: "Sertifikat" },
   certView: { en: "Click to view certificate", id: "Klik untuk lihat sertifikat" },
   openTo: { en: "Open to roles", id: "Terbuka untuk peran" },
-  foot: { en: "// designed & built as a living portfolio", id: "// dirancang & dibangun sebagai portofolio hidup" },
+  // foot: { en: "// designed & built as a living portfolio", id: "// dirancang & dibangun sebagai portofolio hidup" },
   totop: { en: "Back to top", id: "Ke atas" },
   footK: { en: "Let's work together", id: "Mari berkarya" },
   footTagline: {

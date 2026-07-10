@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { getSession } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
@@ -17,10 +18,6 @@ export async function POST(request: NextRequest) {
   // Re-check auth here — Route Handlers are reachable directly, not just via the UI.
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  if (!process.env.CLOUDINARY_API_SECRET) {
-    return NextResponse.json({ error: "Storage belum dikonfigurasi (Cloudinary env belum diset)." }, { status: 500 });
-  }
 
   const form = await request.formData();
   const file = form.get("file");
@@ -49,23 +46,31 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: `File terlalu besar (maks ${isPdf ? 10 : 5} MB).` }, { status: 400 });
   }
 
+  // PDFs: store in the DB and serve via /api/file/[id]. Cloudinary blocks PDF delivery
+  // by default (returns 401), so we don't route PDFs through it.
+  if (isPdf) {
+    try {
+      const blob = await prisma.fileBlob.create({
+        data: { mime: "application/pdf", data: bytes.toString("base64") },
+      });
+      return NextResponse.json({ url: `/api/file/${blob.id}` });
+    } catch {
+      return NextResponse.json({ error: "Gagal menyimpan file." }, { status: 500 });
+    }
+  }
+
+  // Images: upload to Cloudinary.
+  if (!process.env.CLOUDINARY_API_SECRET) {
+    return NextResponse.json({ error: "Storage belum dikonfigurasi (Cloudinary env belum diset)." }, { status: 500 });
+  }
   try {
     const url = await new Promise<string>((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
-        {
-          folder: "portfolio",
-          resource_type: "auto", // handles images and PDFs
-          // keep a readable-ish public id but unique
-          public_id: `${Date.now()}`,
-        },
-        (err, result) => {
-          if (err || !result) reject(err ?? new Error("Upload gagal."));
-          else resolve(result.secure_url);
-        },
+        { folder: "portfolio", resource_type: "image", public_id: `${Date.now()}` },
+        (err, result) => (err || !result ? reject(err ?? new Error("Upload gagal.")) : resolve(result.secure_url)),
       );
       stream.end(bytes);
     });
-
     return NextResponse.json({ url });
   } catch (e) {
     return NextResponse.json(

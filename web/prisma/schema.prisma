@@ -101,6 +101,15 @@ model Organization {
   order   Int    @default(0)
 }
 
+/// Small binary files (e.g. CV PDFs) stored in the DB and served via /api/file/[id].
+/// Cloudinary blocks PDF delivery by default, so PDFs live here instead of Cloudinary.
+model FileBlob {
+  id        String   @id @default(cuid())
+  mime      String
+  data      String // base64-encoded bytes
+  createdAt DateTime @default(now())
+}
+
 model Certificate {
   id      String  @id @default(cuid())
   name    String

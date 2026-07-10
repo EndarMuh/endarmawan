@@ -509,7 +509,6 @@ export default function Portfolio({ content }: { content: ContentData }) {
           </div>
 
           <div className="foot-bar">
-            <span>{t(UI.foot)}</span>
             <span>{p.name} · 2026</span>
             <button className="totop" onClick={() => go("top")}>
               {t(UI.totop)} <IcUp />
